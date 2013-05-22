@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head profile="http://gmpg.org/xfn/11">
+<meta charset="UTF-8">
+<title>grid</title>
+<style>
+html,body{width:100%;height:100%;margin:0;padding:0;}
+div{padding:0;margin:0;font-size:14px;}
+
+.clear:after{content:"";display:block;height:0;clear:both;visibility: hidden;overflow:hidden;}
+.clear{*zoom:1;}
+
+#wrap{width:30%;height:100%;border-right:1px solid #ccc;border-left:1px solid #ccc;margin-left:30%;overflow:auto;}
+#wrap ul{list-style:none;margin:0px;padding:0;width:100%;}
+#wrap ul li{margin:0px;width:100%;background:#eee;border-bottom:2px solid #ccc;padding:10px 0px;}
+#wrap ul li:first-child{background:#999;} 
+</style>
+</head>
+<body>
+
+<div id="wrap">
+	
+	<ul class="item">
+		<li class="cateName">1111111111111</li>
+		<li>
+			<a href="#">first title</a>
+			<p>发多少111111111111111度空间</p>
+		</li>
+		<li>
+			<a href="#">first title</a>
+			<p>发多少看111111111111111度空间</p>
+		</li>
+		<li>
+			<a href="#">first title</a>
+			<p>111111111111111111111间</p>
+		</li>
+	</ul>
+	
+	<ul class="item">
+		<li class="cateName">2222222222222222222222</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多少2222222222222222度空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222222222空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多少2222222222222222度空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222222222空间</p>
+		</li>
+	</ul>
+	
+	
+	<ul class="item">
+		<li class="cateName">333333333333333333333</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多222222222222223333333333333333333333</p>
+		</li>
+	</ul>
+	
+	<ul class="item">
+		<li class="cateName">4444444444444444444444444li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多少2222222222222222度空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222222222空间</p>
+		</li>
+	</ul>
+	
+	
+	<ul class="item">
+		<li class="cateName">55555555555555555555522</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多少2222222222222222度空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222222222空间</p>
+		</li>
+	</ul>
+	
+	
+	<ul class="item">
+		<li class="cateName">22222266666666666666666666666666622</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多少2222222222222222度空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222222222空间</p>
+		</li>
+	</ul>
+	
+</div>
+
+
+<script>
+(function(){
+	var LimitFollow = function(params){
+		var _this = this;
+		_this.paramas = params;
+		_this.wrap = params.wrap || document.getElementById('wrap');
+		_this.items = _this.wrap.getElementsByTagName('ul'); 
+	};
+	LimitFollow.prototype={
+		_pageY:function(element){
+			return elem.offsetParent?(elem.offsetTop+pageY(elem.offsetParent)):elem.offsetTop;
+		}
+	}
+})();
+
+window.onload = function(){
+	var items = document.getElementById("wrap").getElementsByTagName('ul');
+	
+	function pageY(elem){
+				return elem.offsetParent?(elem.offsetTop+pageY(elem.offsetParent)):elem.offsetTop;
+			}
+			
+	document.getElementById('wrap').scrollTop += 100;
+}
+</script>	
+</body>
+</html>
