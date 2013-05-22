@@ -124,18 +124,35 @@ div{padding:0;margin:0;font-size:14px;}
 
 <script>
 (function(){
-	var LimitFollow = function(params){
+	var AreaScroll = function(params){
 		var _this = this;
-		_this.paramas = params;
-		_this.wrap = params.wrap || document.getElementById('wrap');
-		_this.items = _this.wrap.getElementsByTagName('ul'); 
+		_this.params = params || {};
+		_this.wrap = _this.params.wrap || document.getElementById('wrap');
+		_this.items = _this.wrap.getElementsByTagName('ul');
+		_this.length = _this.items.length;
+		_this._setData();
 	};
-	LimitFollow.prototype={
-		_pageY:function(element){
-			return elem.offsetParent?(elem.offsetTop+pageY(elem.offsetParent)):elem.offsetTop;
+	AreaScroll.prototype={
+		_setData:function(){
+			var _this = this;
+			if(!_this.topArray){
+				_this.topArray = []; //建立pageY数组
+				for(var i=0;i<_this.length;i++){
+					var y = _this._pageY(_this.items[i]);
+					_this.topArray.push(y);
+					console.log(_this.topArray);
+				}
+			}
+		},
+		_pageY:function(elem){
+			var _this = this;
+			return elem.offsetParent?(elem.offsetTop+_this._pageY(elem.offsetParent)):elem.offsetTop;
 		}
-	}
+	};
+	window.AreaScroll = AreaScroll;
 })();
+
+new AreaScroll();
 
 window.onload = function(){
 	var items = document.getElementById("wrap").getElementsByTagName('ul');
