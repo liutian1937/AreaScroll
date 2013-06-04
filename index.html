@@ -11,7 +11,7 @@ div{padding:0;margin:0;font-size:14px;}
 .clear:after{content:"";display:block;height:0;clear:both;visibility: hidden;overflow:hidden;}
 .clear{*zoom:1;}
 
-#wrap{width:30%;border-right:1px solid #ccc;border-left:1px solid #ccc;margin-left:30%;position:absolute;top:0px;bottom:0px;-webkit-transition:all 0.3s linear;-moz-transition:all 0.3s linear;}
+#wrap{width:30%;border-right:1px solid #ccc;border-left:1px solid #ccc;margin-left:30%;position:absolute;top:0px;bottom:0px;-webkit-transition:all 0.2s linear;-moz-transition:all 0.2s linear;}
 
 #wrap ul{list-style:none;margin:0px;padding:0;width:100%;position:relative;}
 #wrap ul li{margin:0px;width:100%;background:#eee;border-bottom:2px solid #ccc;padding:10px 0px;}
@@ -149,9 +149,13 @@ document.getElementById('wrap').style.transform = 'translate(0,-10%)';
 			_this.length = _this.items.length;
 			_this.current = 0;
 			_this.newObj = {};
-			_this.handleHash = {};
-			_this.disTop = 0;
-
+			_this.handleHash = {}; //事件绑定的哈希表
+			_this.disTop = 0; //滚动的距离
+			
+			_this.bodyHeight = Math.max(document.body.offsetHeight,document.body.clientHeight);
+			_this.wrapHeight = _this.wrap.scrollHeight;
+			_this.minusHeight =  _this.bodyHeight - _this.wrapHeight;
+			
 			_this.posX = _this._pageX(_this.items[0].getElementsByTagName('li')[0]); //获取距离左边的距离
 			_this.width = _this.items[0].getElementsByTagName('li')[0].offsetWidth; //获取显示的标题的宽度
 
@@ -179,9 +183,24 @@ document.getElementById('wrap').style.transform = 'translate(0,-10%)';
 		},
 		_move : function (dis) {
 			var _this = this;
-			_this.disTop += dis ;
-			//_this.wrap.style.transform = 'translate(0,'+_this.disTop+'px)';
-			_this.wrap.style.WebkitTransform = 'translate3d(0,'+_this.disTop+'px,0)';
+			if(dis > 0 && _this.disTop >= 0){
+				_this.disTop = 0;
+				_this.wrap.style.WebkitTransform = 'translate3d(0,50px,0)';
+			}else if(dis <0 && _this.disTop <= _this.minusHeight){
+				_this.disTop = _this.minusHeight;
+				var s = _this.minusHeight - 50;
+				_this.wrap.style.WebkitTransform = 'translate3d(0,'+s+'px,0)';
+			}else{
+				_this.disTop += dis ;
+				_this.wrap.style.WebkitTransform = 'translate3d(0,'+_this.disTop+'px,0)';
+			};
+			setTimeout(function(){
+				if(_this.disTop == 0){
+					_this.wrap.style.WebkitTransform = 'translate3d(0,0,0)';
+				}else if(_this.disTop == _this.minusHeight){
+					_this.wrap.style.WebkitTransform = 'translate3d(0,'+_this.minusHeight+'px,0)';
+				}
+			},300)
 
 		},
 		mouseWheel : function (event) {
