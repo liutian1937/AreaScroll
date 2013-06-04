@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 ﻿
+=======
+﻿/*
+	Name: Javascript AreaScroll Plugin
+	Author: ok8008@yeah.net
+*/
+>>>>>>> ee338905d2aee6b4db807ff3fd6177f1f0b8c499
 (function(){
 	var AreaScroll = function(params){
 		var _this = this;
@@ -85,5 +92,8 @@
 		}
 	};
 	window.AreaScroll = AreaScroll;
+<<<<<<< HEAD
 })();
+=======
+>>>>>>> ee338905d2aee6b4db807ff3fd6177f1f0b8c499
 })();
