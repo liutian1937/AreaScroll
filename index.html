@@ -5,20 +5,21 @@
 <title>grid</title>
 <style>
 html,body{width:100%;height:100%;margin:0;padding:0;}
+body{overflow:hidden;}
 div{padding:0;margin:0;font-size:14px;}
 
-body{overflow:hidden;}
 .clear:after{content:"";display:block;height:0;clear:both;visibility: hidden;overflow:hidden;}
 .clear{*zoom:1;}
 
-#wrap{width:30%;height:100%;border-right:1px solid #ccc;border-left:1px solid #ccc;margin-left:30%;}
+#wrap{width:30%;border-right:1px solid #ccc;border-left:1px solid #ccc;margin-left:30%;position:absolute;top:0px;bottom:0px;-webkit-transition:all 0.3s linear;-moz-transition:all 0.3s linear;}
+
 #wrap ul{list-style:none;margin:0px;padding:0;width:100%;position:relative;}
 #wrap ul li{margin:0px;width:100%;background:#eee;border-bottom:2px solid #ccc;padding:10px 0px;}
 #wrap ul li.cateName{background:#999;}
 
 
 </style>
-<script type="text/javascript" src="AreaScroll.js" ></script>
+<!-- <script type="text/javascript" src="AreaScroll.js" ></script> -->
 </head>
 <body>
 
@@ -133,22 +134,32 @@ document.getElementById('wrap').style.transform = 'translate(0,-10%)';
 */
 
 (function(){
-	var AreaScroll = function(params){
-		var _this = this;
-		_this.params = params || {};
-		_this.wrap = _this.params.wrap || document.getElementById('wrap');
-		_this.items = _this.wrap.getElementsByTagName('ul');
-		_this.length = _this.items.length;
-		_this.current = 0;
-		_this.newObj = {};
-		
-		_this.posX = _this._pageX(_this.items[0].getElementsByTagName('li')[0]);
-		_this.width = _this.items[0].getElementsByTagName('li')[0].offsetWidth;
-		
-		_this._setData();
-		_this._addEventCheck(_this.wrap,'scroll',function(){_this._scroll()});
+	var JScroll = function(params){
+		if(!(this instanceof JScroll)) {
+			return new JScroll(params);
+		};
+		this.params = params || {};
+		this.wrap = this.params.wrap || document.getElementById('wrap');
+		this.init();
 	};
-	AreaScroll.prototype={
+	JScroll.prototype={
+		init : function () {
+			var _this = this;
+			_this.items = _this.wrap.getElementsByTagName('ul');
+			_this.length = _this.items.length;
+			_this.current = 0;
+			_this.newObj = {};
+			_this.handleHash = {};
+			_this.disTop = 0;
+			
+			_this.posX = _this._pageX(_this.items[0].getElementsByTagName('li')[0]); //获取距离左边的距离
+			_this.width = _this.items[0].getElementsByTagName('li')[0].offsetWidth; //获取显示的标题的宽度
+			
+			_this._setData();
+			
+			var mousewheel = (document.hasOwnProperty('onmousewheel')) ? "mousewheel" : "DOMMouseScroll" ;
+			_this._bind(_this.wrap,mousewheel,_this.mouseWheel);
+		},
 		_scroll:function(){
 			var _this = this;
 			_this.scrollTop = _this.wrap.scrollTop;
@@ -165,6 +176,18 @@ document.getElementById('wrap').style.transform = 'translate(0,-10%)';
 				_this._showNav(prev);
 				_this.current -- ;
 			}
+		},
+		_move : function (dis) {
+			var _this = this;
+			_this.disTop += dis ;
+			//_this.wrap.style.transform = 'translate(0,'+_this.disTop+'px)';
+			_this.wrap.style.WebkitTransform = 'translate3d(0,'+_this.disTop+'px,0)';
+			
+		},
+		mouseWheel : function (event) {
+			var _this = this, direction, delta = event.wheelDelta ? (event.wheelDelta / 120) : (- event.detail / 3);
+			dis = (delta > 0)?100:-100;
+			_this._move(dis);
 		},
 		_showNav:function(current){
 			var _this = this;
@@ -208,19 +231,53 @@ document.getElementById('wrap').style.transform = 'translate(0,-10%)';
 			//获取距离顶部的距离
 			return elem.offsetParent?(elem.offsetTop+this._pageY(elem.offsetParent)):elem.offsetTop;
 		},
-		_addEventCheck:function(obj,evt,fn){
-			//事件监听
-			if (obj.addEventListener){
-				obj.addEventListener(evt,fn,false);
-			}else if(obj.attachEvent){
-				obj.attachEvent('on'+evt,fn);
+		_bind : (function() {
+			if (window.addEventListener) {
+				return function(el, type, fn, capture) {
+					var _this = this;
+					el.addEventListener(type, function(){
+						fn.call(_this,arguments[0]);
+						_this.handleHash[type] = arguments.callee;
+					}, (capture));
+				};
+			} else if (window.attachEvent) {
+				return function(el, type, fn, capture) {
+					var _this = this;
+					el.attachEvent("on" + type, function(){
+						fn.call(_this,arguments[0]);
+						_this.handleHash[type] = arguments.callee;
+					});
+				};
+			}
+		})(),
+		_unbind : (function(){
+			if (window.addEventListener) {
+				return function(el, type ) {
+					var _this = this;
+					if(_this.handleHash[type]){
+						el.removeEventListener(type, _this.handleHash[type]);
+					};
+				};
+			} else if (window.attachEvent) {
+				return function(el, type) {
+					var _this = this;
+					if(_this.handleHash[type]){
+						el.detachEvent("on" + type, _this.handleHash[type]);
+					};
+				};
+			}
+		})(),
+		_destory : function () {
+			var _this = this, i;
+			for(i in _this.handleHash){
+				_this.unbind(_this.obj,i,_this.handleHash[i]);
 			}
 		}
 	};
-	window.AreaScroll = AreaScroll;
+	window.JScroll = JScroll;
 })();
 
-new AreaScroll();
+JScroll();
 
 </script>	
 </body>
