@@ -11,7 +11,7 @@ div{padding:0;margin:0;font-size:14px;}
 .clear:after{content:"";display:block;height:0;clear:both;visibility: hidden;overflow:hidden;}
 .clear{*zoom:1;}
 
-#wrap{width:30%;border-right:1px solid #ccc;border-left:1px solid #ccc;margin-left:30%;position:absolute;top:0px;bottom:0px;-webkit-transition:all 0.2s linear;-moz-transition:all 0.2s linear;}
+#wrap{width:30%;border-right:1px solid #ccc;border-left:1px solid #ccc;margin-left:30%;position:absolute;top:0px;bottom:0px;}
 
 #wrap ul{list-style:none;margin:0px;padding:0;width:100%;position:relative;}
 #wrap ul li{margin:0px;width:100%;background:#eee;border-bottom:2px solid #ccc;padding:10px 0px;}
@@ -126,12 +126,9 @@ div{padding:0;margin:0;font-size:14px;}
 
 </div>
 
-
+<script type="text/javascript" src="jTouch.js" ></script>
 <script>
-/*
-document.getElementById('wrap').style.webkitTransform = 'translate(0,-10%)';
-document.getElementById('wrap').style.transform = 'translate(0,-10%)';
-*/
+
 
 (function(){
 	var JScroll = function(params){
@@ -140,31 +137,49 @@ document.getElementById('wrap').style.transform = 'translate(0,-10%)';
 		};
 		this.params = params || {};
 		this.wrap = this.params.wrap || document.getElementById('wrap');
+		this.touch = jTouch(this.wrap);
 		this.init();
 	};
 	JScroll.prototype={
 		init : function () {
 			var _this = this;
-			_this.items = _this.wrap.getElementsByTagName('ul');
-			_this.length = _this.items.length;
-			_this.current = 0;
-			_this.newObj = {};
+			_this.items = _this.wrap.getElementsByTagName('ul');//获取子元素ul的数组
+			_this.length = _this.items.length;//数组长度
+			_this.current = 0;//当前滚动到第几个
+			_this.newObj = {};//缓存对象
 			_this.handleHash = {}; //事件绑定的哈希表
 			_this.disTop = 0; //滚动的距离
-			
+			_this.eachHeight = 100;//鼠标滚轮一次的长度
+			_this.result = 0;
+			/*
+				bodyHeight （窗口高度） - wrapHeight (外围容器高度)  = limitHeight (底部临界值)
+			*/
 			_this.bodyHeight = Math.max(document.body.offsetHeight,document.body.clientHeight);
 			_this.wrapHeight = _this.wrap.scrollHeight;
-			_this.minusHeight =  _this.bodyHeight - _this.wrapHeight;
+			_this.limitHeight =  _this.bodyHeight - _this.wrapHeight;
 			
-			_this.posX = _this._pageX(_this.items[0].getElementsByTagName('li')[0]); //获取距离左边的距离
-			_this.width = _this.items[0].getElementsByTagName('li')[0].offsetWidth; //获取显示的标题的宽度
+			/*
+				posX 获取 ul > li:first 距离左边的距离
+				width 获取 ul > li:first 的宽度
+			*/
+			_this.posX = _this._pageX(_this.items[0].getElementsByTagName('li')[0]); 
+			_this.width = _this.items[0].getElementsByTagName('li')[0].offsetWidth; 
 
-			_this._setData();
+			_this._setData(); //缓存每个ul到顶部距离
+			
+			_this.touch.on('mousewheel',function(evt,data){
+				_this.move((data['direction'] === 'up')?_this.eachHeight:-_this.eachHeight,true);
+			}).on('swipe',function(evt,data){
+				_this.move(data['y']);
+				if(data['status'] == 'end'){
+					_this.end();
+				};
+			}).on('end',function(){
+				_this.end();
+			});
 
-			var mousewheel = (document.hasOwnProperty('onmousewheel')) ? "mousewheel" : "DOMMouseScroll" ;
-			_this._bind(_this.wrap,mousewheel,_this.mouseWheel);
 		},
-		_scroll:function(){
+		scroll:function(){
 			var _this = this;
 			_this.scrollTop = _this.wrap.scrollTop;
 			var next = (_this.current < _this.length)?_this.current + 1 : _this.length;
@@ -181,32 +196,40 @@ document.getElementById('wrap').style.transform = 'translate(0,-10%)';
 				_this.current -- ;
 			}
 		},
-		_move : function (dis) {
-			var _this = this;
-			if(dis > 0 && _this.disTop >= 0){
-				_this.disTop = 0;
-				_this.wrap.style.WebkitTransform = 'translate3d(0,50px,0)';
-			}else if(dis <0 && _this.disTop <= _this.minusHeight){
-				_this.disTop = _this.minusHeight;
-				var s = _this.minusHeight - 50;
-				_this.wrap.style.WebkitTransform = 'translate3d(0,'+s+'px,0)';
+		move : function (dis,wheel) {
+			var _this = this, result = _this.disTop + dis;
+			if(wheel){
+				if(dis > 0 && result >= 0){
+					result = 0;
+				}else if(dis < 0 && result <= _this.limitHeight){
+					result = _this.limitHeight;
+				};
+				_this.wrap.style.WebkitTransform = 'translate3d(0,'+result+'px,0)';
+				_this.disTop = result;
 			}else{
-				_this.disTop += dis ;
-				_this.wrap.style.WebkitTransform = 'translate3d(0,'+_this.disTop+'px,0)';
+				//_this.disTop = _this.disTop + dis;
+				//console.log(dis);
+				_this.wrap.style.WebkitTransform = 'translate3d(0,'+result+'px,0)';
+				
+				_this.result = _this.disTop + dis;
 			};
-			setTimeout(function(){
-				if(_this.disTop == 0){
-					_this.wrap.style.WebkitTransform = 'translate3d(0,0,0)';
-				}else if(_this.disTop == _this.minusHeight){
-					_this.wrap.style.WebkitTransform = 'translate3d(0,'+_this.minusHeight+'px,0)';
-				}
-			},300)
-
+			
+		},
+		end : function () {
+			var _this = this;
+			_this.disTop = _this.result;
+			if(_this.result >= 0){
+				_this.disTop = 0;
+				_this.wrap.style.WebkitTransform = 'translate3d(0,0,0)';
+			}else if(_this.result <= _this.limitHeight){
+				_this.disTop = _this.limitHeight;
+				_this.wrap.style.WebkitTransform = 'translate3d(0,'+_this.limitHeight+'px,0)';
+			};
 		},
 		mouseWheel : function (event) {
 			var _this = this, direction, delta = event.wheelDelta ? (event.wheelDelta / 120) : (- event.detail / 3);
-			dis = (delta > 0)?100:-100;
-			_this._move(dis);
+			dis = (delta > 0)?_this.eachHeight:-_this.eachHeight;
+			_this.move(dis,true);
 		},
 		_showNav:function(current){
 			var _this = this;
@@ -225,16 +248,15 @@ document.getElementById('wrap').style.transform = 'translate(0,-10%)';
 			};
 		},
 		_setData:function(){
-			var _this = this;
-			_this.wrap.scrollTop = 0;
+			var _this = this,i = 0, y;
 			if(!_this.topArray){
 				_this.topArray = []; //建立pageY数组
-				for(var i=0;i<_this.length;i++){
-					var y = _this._pageY(_this.items[i]);
+				for(i; i<_this.length; i += 1){
+					y = -_this._pageY(_this.items[i])-50;
 					_this.topArray.push(y);
 					console.log(_this.topArray);
 				}
-			}
+			};
 		},
 		_setStyle:function(obj,val){
 			//设置样式
@@ -250,7 +272,7 @@ document.getElementById('wrap').style.transform = 'translate(0,-10%)';
 			//获取距离顶部的距离
 			return elem.offsetParent?(elem.offsetTop+this._pageY(elem.offsetParent)):elem.offsetTop;
 		},
-		_bind : (function() {
+				_bind : (function() {
 			if (window.addEventListener) {
 				return function(el, type, fn, capture) {
 					var _this = this;
@@ -286,13 +308,13 @@ document.getElementById('wrap').style.transform = 'translate(0,-10%)';
 				};
 			}
 		})(),
-		_destory : function () {
+		destory : function () {
 			var _this = this, i;
 			for(i in _this.handleHash){
 				_this.unbind(_this.obj,i,_this.handleHash[i]);
 			}
 		}
-	};
+	};	
 	window.JScroll = JScroll;
 })();
 
