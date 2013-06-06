@@ -1,162 +1,339 @@
 ﻿<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<html lang="zh-CN">
+<head profile="http://gmpg.org/xfn/11">
+<meta charset="UTF-8">
+<title>grid</title>
+<style>
+html,body{width:100%;height:100%;margin:0;padding:0;}
+body{overflow:hidden;}
+div{padding:0;margin:0;font-size:14px;}
 
-<title>iScroll demo: scrollbars</title>
+.clear:after{content:"";display:block;height:0;clear:both;visibility: hidden;overflow:hidden;}
+.clear{*zoom:1;}
 
-<script type="text/javascript" src="iscroll.js"></script>
+#wrap{width:30%;border-right:1px solid #ccc;border-left:1px solid #ccc;margin-left:30%;position:absolute;top:0;bottom:0;}
 
-<script type="text/javascript">
+#wrap ul{list-style:none;margin:0px;padding:0;width:100%;position:relative;}
+#wrap ul li{margin:0px;width:100%;background:#eee;border-bottom:2px solid #ccc;padding:10px 0px;}
+#wrap ul li.cateName{background:#999;z-index:999;height:30px;border:none;}
 
-var myScroll;
-
-function loaded () {
-	myScroll = new IScroll('#wrapper', { scrollbars: true, mouseWheel: true, interactiveScrollbars: true });
-}
-
-document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
-
-</script>
-
-<style type="text/css">
-* {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-}
-
-html {
-	-ms-touch-action: none;
-}
-
-body,ul,li {
-	padding: 0;
-	margin: 0;
-	border: 0;
-}
-
-body {
-	font-size: 12px;
-	font-family: ubuntu, helvetica, arial;
-	overflow: hidden; /* this is important to prevent the whole page to bounce */
-}
-
-
-#wrapper {
-	position: absolute;
-	z-index: 1;
-	top: 0px;
-	bottom: 0px;
-	left: 0;
-	width: 30%;
-	background: #ccc;
-	overflow: hidden;
-}
-
-#scroller {
-	position: absolute;
-	z-index: 1;
-	-webkit-tap-highlight-color: rgba(0,0,0,0);
-	width: 100%;
-	-webkit-transform: translateZ(0);
-	-moz-transform: translateZ(0);
-	-ms-transform: translateZ(0);
-	-o-transform: translateZ(0);
-	transform: translateZ(0);
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	-webkit-text-size-adjust: none;
-	-moz-text-size-adjust: none;
-	-ms-text-size-adjust: none;
-	-o-text-size-adjust: none;
-	text-size-adjust: none;
-	
-}
-
-#scroller ul {
-	list-style: none;
-	padding: 0;
-	margin: 0;
-	width: 100%;
-	text-align: left;
-}
-
-#scroller li {
-	padding: 0 10px;
-	height: 40px;
-	line-height: 40px;
-	border-bottom: 1px solid #ccc;
-	border-top: 1px solid #fff;
-	background-color: #fafafa;
-	font-size: 14px;
-}
 
 </style>
+<!-- <script type="text/javascript" src="AreaScroll.js" ></script> -->
 </head>
-<body onload="loaded()">
+<body>
 
 
-<div id="wrapper">
-	<div id="scroller">
-		<ul>
-			<li>Pretty row 1</li>
-			<li>Pretty row 2</li>
-			<li>Pretty row 3</li>
-			<li>Pretty row 4</li>
-			<li>Pretty row 5</li>
-			<li>Pretty row 6</li>
-			<li>Pretty row 7</li>
-			<li>Pretty row 8</li>
-			<li>Pretty row 9</li>
-			<li>Pretty row 10</li>
-			<li>Pretty row 11</li>
-			<li>Pretty row 12</li>
-			<li>Pretty row 13</li>
-			<li>Pretty row 14</li>
-			<li>Pretty row 15</li>
-			<li>Pretty row 16</li>
-			<li>Pretty row 17</li>
-			<li>Pretty row 18</li>
-			<li>Pretty row 19</li>
-			<li>Pretty row 20</li>
-			<li>Pretty row 21</li>
-			<li>Pretty row 22</li>
-			<li>Pretty row 23</li>
-			<li>Pretty row 24</li>
-			<li>Pretty row 25</li>
-			<li>Pretty row 26</li>
-			<li>Pretty row 27</li>
-			<li>Pretty row 28</li>
-			<li>Pretty row 29</li>
-			<li>Pretty row 30</li>
-			<li>Pretty row 31</li>
-			<li>Pretty row 32</li>
-			<li>Pretty row 33</li>
-			<li>Pretty row 34</li>
-			<li>Pretty row 35</li>
-			<li>Pretty row 36</li>
-			<li>Pretty row 37</li>
-			<li>Pretty row 38</li>
-			<li>Pretty row 39</li>
-			<li>Pretty row 40</li>
-			<li>Pretty row 41</li>
-			<li>Pretty row 42</li>
-			<li>Pretty row 43</li>
-			<li>Pretty row 44</li>
-			<li>Pretty row 45</li>
-			<li>Pretty row 46</li>
-			<li>Pretty row 47</li>
-			<li>Pretty row 48</li>
-			<li>Pretty row 49</li>
-			<li>Pretty row 50</li>
-		</ul>
-	</div>
+<div id="wrap">
+
+	<ul class="item">
+		<li class="cateName">1111111111111</li>
+		<li>
+			<a href="#">first title</a>
+			<p>发多少111111111111111度空间</p>
+		</li>
+		<li>
+			<a href="#">first title</a>
+			<p>发多少看111111111111111度空间</p>
+		</li>
+		<li>
+			<a href="#">first title</a>
+			<p>111111111111111111111间</p>
+		</li>
+	</ul>
+
+	<ul class="item">
+		<li class="cateName">2222222222222222222222</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多少2222222222222222度空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222222222空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多少2222222222222222度空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222222222空间</p>
+		</li>
+	</ul>
+
+
+	<ul class="item">
+		<li class="cateName">333333333333333333333</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多222222222222223333333333333333333333</p>
+		</li>
+	</ul>
+
+	<ul class="item">
+		<li class="cateName">4444444444444444444444444li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多少2222222222222222度空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222222222空间</p>
+		</li>
+	</ul>
+
+
+	<ul class="item">
+		<li class="cateName">55555555555555555555522</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多少2222222222222222度空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222222222空间</p>
+		</li>
+	</ul>
+
+
+	<ul class="item">
+		<li class="cateName">22222266666666666666666666666666622</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多少2222222222222222度空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222222222空间</p>
+		</li>
+	</ul>
+
 </div>
 
+<script type="text/javascript" src="jTouch.js" ></script>
+<script>
+
+
+(function(){
+	var JScroll = function(params){
+		if(!(this instanceof JScroll)) {
+			return new JScroll(params);
+		};
+		this.params = params || {};
+		this.wrap = this.params.wrap || document.getElementById('wrap');
+		this.touch = jTouch(this.wrap);
+		this.init();
+	};
+	JScroll.prototype={
+		init : function () {
+			var _this = this;
+			_this.items = _this.wrap.getElementsByTagName('ul');//获取子元素ul的数组
+			_this.length = _this.items.length;//数组长度
+			_this.current = 0;//当前滚动到第几个
+			
+			_this.handleHash = {}; //事件绑定的哈希表
+			_this.disTop = 0; //滚动的距离
+			_this.eachHeight = 100;//鼠标滚轮一次的长度
+			_this.result = 0;
+			/*
+				bodyHeight （窗口高度） - wrapHeight (外围容器高度)  = limitHeight (底部临界值)
+			*/
+			_this.bodyHeight = Math.max(document.body.offsetHeight,document.body.clientHeight);
+			_this.wrapHeight = _this.wrap.scrollHeight;
+			_this.limitHeight =  _this.bodyHeight - _this.wrapHeight;
+			
+			/*
+				posX 获取 ul > li:first 距离左边的距离
+				width 获取 ul > li:first 的宽度
+			*/
+			_this.posX = _this._pageX(_this.items[0].getElementsByTagName('li')[0]); 
+			_this.width = _this.items[0].getElementsByTagName('li')[0].offsetWidth; 
+
+			_this._setData(); //缓存每个ul到顶部距离
+			
+			_this.touch.on('mousewheel',function(evt,data){
+				_this.move((data['direction'] === 'up')?_this.eachHeight:-_this.eachHeight,true);
+			}).on('swipe',function(evt,data){
+				_this.move(data['y']);
+				if(data['status'] == 'end'){
+					_this.end();
+				};
+			}).on('end',function(){
+				_this.end();
+			});
+
+		},
+		scroll:function(dis){
+			var _this = this;
+
+			
+			var next = (_this.current < _this.length)?_this.current + 1 : _this.length;
+			var prev = (_this.current < 1)?0: _this.current - 1;
+			
+			//console.log('结果'+_this.result+'前面'+_this.topArray[_this.current]['y']+'当前'+_this.current);
+
+			if(dis < 0){
+				if(Math.abs(_this.result) < _this.topArray[next]['y']){
+					_this.moveNav(_this.topArray[_this.current]['y']+_this.result);
+				}else{
+					_this.current = next;
+				};
+			}else{
+				if(Math.abs(_this.result) < _this.topArray[_this.current]['y']){
+					_this.current = prev;
+				}else{
+					_this.moveNav(_this.topArray[_this.current]['y']+_this.result);
+				};
+			}
+		},
+		moveNav : function (result) {
+			var _this = this;
+			if(result > 0){
+				return false;
+			}else{
+				result = Math.abs(result);
+				result = (result < _this.topArray[_this.current]['limit'])?result:_this.topArray[_this.current]['limit'];
+			}
+			_this.newObj[_this.current].style.WebkitTransform = 'translate3d(0,'+result+'px,0)'
+		},
+		move : function (dis,wheel) {
+			var _this = this, result = _this.disTop + dis;
+			if(wheel){
+				if(dis > 0 && result >= 0){
+					result = 0;
+				}else if(dis < 0 && result <= _this.limitHeight){
+					result = _this.limitHeight;
+				};
+				_this.wrap.style.WebkitTransform = 'translate3d(0,'+result+'px,0)';
+				_this.disTop = result;
+			}else{
+				_this.wrap.style.WebkitTransform = 'translate3d(0,'+result+'px,0)';
+				_this.result = _this.disTop + dis;
+				_this.scroll(dis);
+			};
+			
+		},
+		end : function () {
+			var _this = this;
+			_this.disTop = _this.result;
+			if(_this.result >= 0){
+				_this.disTop = 0;
+				_this.wrap.style.WebkitTransform = 'translate3d(0,0,0)';
+			}else if(_this.result <= _this.limitHeight){
+				_this.disTop = _this.limitHeight;
+				_this.wrap.style.WebkitTransform = 'translate3d(0,'+_this.limitHeight+'px,0)';
+			};
+		},
+		_showNav:function(current){
+			var _this = this;
+			
+			_this._setStyle(_this.newObj[current],{
+				'position':'fixed',
+				'left':_this.posX+'px',
+				'top':'0px',
+				'bottom':'auto',
+				'width':_this.width+'px',
+				'display':'block'
+			});
+		},
+		_setData:function(){
+			var _this = this,i = 0, y;
+			
+			_this.topArray = []; //建立pageY数组
+			_this.newObj = {};//缓存对象
+			
+			for(i; i<_this.length; i += 1){
+				y = _this._pageY(_this.items[i]);
+				_this.topArray.push({'y':y,'limit':0});
+				if(i > 0){
+					_this.topArray[i-1]['limit'] = y-_this.topArray[i-1]['y']-50;
+					if(i === _this.length -1){
+						_this.topArray[i]['limit'] = _this.wrapHeight-_this.topArray[i-1]['y']-50;
+					}
+				};
+				_this.newObj[i] = _this.items[i].getElementsByTagName('li')[0];
+			};
+			
+		},
+		_setStyle:function(obj,val){
+			//设置样式
+			for(var attr in val){
+				obj.style[attr] = val[attr];
+			}
+		},
+		_pageX:function(elem){
+			//获取距离左边的距离
+			return elem.offsetParent?(elem.offsetLeft+this._pageX(elem.offsetParent)):elem.offsetLeft;
+		},
+		_pageY:function(elem){
+			//获取距离顶部的距离
+			return elem.offsetParent?(elem.offsetTop+this._pageY(elem.offsetParent)):elem.offsetTop;
+		},
+		_bind : (function() {
+			if (window.addEventListener) {
+				return function(el, type, fn, capture) {
+					var _this = this;
+					el.addEventListener(type, function(){
+						fn.call(_this,arguments[0]);
+						_this.handleHash[type] = arguments.callee;
+					}, (capture));
+				};
+			} else if (window.attachEvent) {
+				return function(el, type, fn, capture) {
+					var _this = this;
+					el.attachEvent("on" + type, function(){
+						fn.call(_this,arguments[0]);
+						_this.handleHash[type] = arguments.callee;
+					});
+				};
+			}
+		})(),
+		_unbind : (function(){
+			if (window.addEventListener) {
+				return function(el, type ) {
+					var _this = this;
+					if(_this.handleHash[type]){
+						el.removeEventListener(type, _this.handleHash[type]);
+					};
+				};
+			} else if (window.attachEvent) {
+				return function(el, type) {
+					var _this = this;
+					if(_this.handleHash[type]){
+						el.detachEvent("on" + type, _this.handleHash[type]);
+					};
+				};
+			}
+		})(),
+		destory : function () {
+			var _this = this, i;
+			for(i in _this.handleHash){
+				_this.unbind(_this.obj,i,_this.handleHash[i]);
+			}
+		}
+	};
+	window.JScroll = JScroll;
+})();
+
+JScroll();
+
+</script>	
 </body>
 </html>
