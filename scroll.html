@@ -238,7 +238,7 @@ div{padding:0;margin:0;font-size:14px;}
 			
 			_this.wrap.style.height = _this.wrap.scrollHeight +'px';
 			
-			//_this.nav = new Nav(_this.wrap);实例化导航变化
+			_this.nav = new Nav(_this.wrap);//实例化导航变化
 			
 			/*
 				Touch事件的处理
@@ -294,7 +294,7 @@ div{padding:0;margin:0;font-size:14px;}
 			var _this = this, result = _this.resultTop + dis;
 			_this.translate(result); //开始移动
 			_this.disTop = result;
-			//_this.nav.scroll(_this.disTop);处理导航
+			_this.nav.scroll(-_this.disTop);
 		},
 		run : function (dis,time) {
 			var _this, result, t, b, c, d;
@@ -428,9 +428,101 @@ div{padding:0;margin:0;font-size:14px;}
 	var Nav = function (obj) {
 		var _this = this;
 		_this.items = obj.getElementsByTagName('ul');//获取子元素ul的数组
+		_this.titleHeight = 50;
 		_this.init();
 	}
 	Nav.prototype = {
+		init:function(){
+			var _this = this,i = 0, y;
+			_this.current = 0;//当前滚动到第几个
+			_this.length = _this.items.length;//数组长度
+			_this.topArray = []; //建立pageY数组
+			_this.newObj = {};//缓存对象
+			
+			/*
+				posX 获取 ul > li:first 距离左边的距离
+				width 获取 ul > li:first 的宽度
+			*/
+
+			for(i; i<_this.length; i += 1){
+				y = _this._pageY(_this.items[i]);
+				_this.topArray.push({'y':y,'limit':0});
+				if(i > 0){
+					_this.topArray[i-1]['limit'] = y-_this.topArray[i-1]['y']-_this.titleHeight;
+					if(i === _this.length -1){
+						_this.topArray[i]['limit'] = _this.wrapHeight-y-_this.titleHeight;
+					}
+				};
+				_this.newObj[i] = _this.items[i].getElementsByTagName('li')[0];
+			};
+			
+		},
+		scroll:function(disTop){
+			//处理滚动条的方法
+			var _this = this;
+			var next = (_this.current < _this.length)?_this.current + 1 : _this.length;
+			var prev = (_this.current < 1)?0: _this.current - 1;
+			
+			var distance = disTop - _this.topArray[_this.current]['y'];
+			
+			if(disTop > _this.topArray[_this.current]['y'] && distance < _this.topArray[_this.current]['limit']){
+				_this.translate(distance);
+			}else if(disTop > _this.topArray[next]['y']){
+				_this.current = next;
+			}else if(disTop < _this.topArray[_this.current]['y']){
+				_this.current = prev;
+			}
+		},
+		_startNav : function(current){
+			var _this = this;
+		},
+		_stopNav : function (current,where) {
+			var _this = this;
+			switch (where){
+				case 'top':
+					_this._setStyle(_this.newObj[current],{
+					'position':'absolute',
+					'left':'0px',
+					'top':'0px',
+					'bottom':'auto',
+					'width':_this.width+'px'
+					});
+					break;
+				case 'bottom':
+					_this._setStyle(_this.newObj[current],{
+						'position':'absolute',
+						'left':'0px',
+						'top':'auto',
+						'bottom':'0px',
+						'width':_this.width+'px'
+					});
+					break;
+			};
+		},
+		translate : function (dis) {
+			var _this = this, obj = _this.newObj[_this.current];
+			if(Common.isWebkit()){
+				Common.css(obj,{
+					'WebkitTransform' : 'translate3d(0,'+dis+'px,0)'
+				});
+			}else{
+				Common.css(obj,{
+					'transform' : 'translate(0,'+dis+'px)'
+				});
+			}
+		},
+		_pageY:function(elem){
+			//获取距离顶部的距离
+			return elem.offsetParent?(elem.offsetTop+this._pageY(elem.offsetParent)):elem.offsetTop;
+		}
+	};
+	
+	var Navs = function (obj) {
+		var _this = this;
+		_this.items = obj.getElementsByTagName('ul');//获取子元素ul的数组
+		_this.init();
+	}
+	Navs.prototype = {
 		init:function(){
 			var _this = this,i = 0, y;
 			_this.current = 0;//当前滚动到第几个
