@@ -1,4 +1,4 @@
-﻿/*
+﻿﻿/*
 JTouch v1.1  2013-06-04
 https://github.com/liutian1937/JTouch
 ok8008@yeah.net
@@ -33,11 +33,7 @@ ok8008@yeah.net
  	var TouchAction = function (element,event,touch) {
 		/*
 		函数TouchAction主要针对点击，滑动的处理，手势变换用下面Gesture
-<<<<<<< HEAD
-		点击事件：Tap,DoubleTap,LongTap,Swipe(滑动),flick(轻拂)
-=======
 		点击事件：Tap,DoubleTap,LongTap,Swipe(滑动),Flick(轻拂)
->>>>>>> dc0431e93b5753e989d77b9121a7d92f82ab2c7d
 		 */
 		this.evt = event;
 		this.touch = touch || undefined;
@@ -148,21 +144,11 @@ ok8008@yeah.net
 				_this.data['x'] = offsetX;
 				_this.data['y'] = offsetY;
 				
-				duration = Common.getTime() - _this.startTime;
+				_this.data['time'] = Common.getTime() - _this.startTime;
 
-<<<<<<< HEAD
-				if (new Date() - _this.startTime <= 200) {
-					//时间小于200，动作为轻拂：flick
-					if (Math.abs(offsetY) > Math.abs(offsetX)) {
-						_this.data['direction'] = offsetY > 0 ? 'down' : 'up';
-					} else {
-						_this.data['direction'] = offsetX > 0 ? 'right' : 'left';
-					}
-					_this.eventType = 'flick';
-=======
-				if (duration < 300) {
-					_this.data['speed'] = Math.max(Math.abs(_this.currentX - _this.swipeData['x'])/duration,Math.abs(_this.currentY - _this.swipeData['y'])/duration);
-					if(_this.data['speed'] > 0.5){
+				if (_this.data['time'] < 300) {
+					duration = Math.max(Math.abs(_this.currentX - _this.swipeData['x']),Math.abs(_this.currentY - _this.swipeData['y']));
+					if(duration > 300){
 						//时间小于300，动作为轻拂：flick
 						if (Math.abs(offsetY) > Math.abs(offsetX)) {
 							_this.data['direction'] = offsetY > 0 ? 'down' : 'up';
@@ -173,7 +159,6 @@ ok8008@yeah.net
 					}else{
 						_this.data['status'] = 'end';
 					}
->>>>>>> dc0431e93b5753e989d77b9121a7d92f82ab2c7d
 				}else {
 					//滑动结束，swipe end
 					_this.data['status'] = 'end';
