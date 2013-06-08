@@ -147,6 +147,7 @@ div{padding:0;margin:0;font-size:14px;}
 			var _this = this;
 			
 			_this.isAnimate = false;//判断是否有动画
+			_this.isStop = false; //是否停止
 			_this.handleHash = {}; //事件绑定的哈希表
 			
 			_this.disTop = 0; //滚动的距离
@@ -166,6 +167,7 @@ div{padding:0;margin:0;font-size:14px;}
 			*/
 			
 			_this.touch.on('start',function(){
+				_this.stop();
 				_this.resultTop = _this.wrap.scrollTop;
 			}).on('mousewheel',function(evt,data){
 				if(_this.disTop >= _this.limitHeight && data['direction'] === 'down'){
@@ -180,9 +182,10 @@ div{padding:0;margin:0;font-size:14px;}
 				if(data['status'] == 'end'){
 					_this.end();
 				};
-			}).on('flip',function(evt,data){
-				_this._run(((data['direction'] === 'down')?300:-300),30);
-			}).on('end',function(){
+			}).on('flick',function(evt,data){
+				var distance = (data['direction'] === 'up')?500*data['speed']:-500*data['speed'];
+				_this._run(distance,data['speed']*50);
+			}).on('end',function(){	
 				_this.end();
 			});
 
@@ -201,6 +204,13 @@ div{padding:0;margin:0;font-size:14px;}
 			_this.nav.scroll(_this.disTop);//触发导航移动
 			
 		},
+		stop : function () {
+			var _this = this;
+			if(_this.isAnimate){
+				clearTimeout(_this.timer);
+				_this.isAnimate = false;
+			};
+		},
 		end : function () {
 			var _this = this;
 			_this.disTop = _this.wrap.scrollTop;
@@ -215,7 +225,7 @@ div{padding:0;margin:0;font-size:14px;}
 				_this.wrap.scrollTop = _this.disTop = Math.ceil(_this._linear(t,b,c,d));
 				if(t<d){
 					t++;
-					setTimeout(Run,10);
+					_this.timer = setTimeout(Run,10);
 				}else{
 					_this.isAnimate = false;
 					_this.disTop = _this.wrap.scrollTop;

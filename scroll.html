@@ -67,13 +67,7 @@ div{padding:0;margin:0;font-size:14px;}
 	</ul>
 
 
-	<ul class="item">
-		<li class="cateName">333333333333333333333</li>
-		<li>
-			<a href="#">标题2</a>
-			<p>发多222222222222223333333333333333333333</p>
-		</li>
-	</ul>
+
 
 	<ul class="item">
 		<li class="cateName">4444444444444444444444444li>
@@ -123,8 +117,80 @@ div{padding:0;margin:0;font-size:14px;}
 			<a href="#">标题2</a>
 			<p>发多2222222222222222222222空间</p>
 		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多少2222222222222222度空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222222222空间</p>
+		</li>
+				<li>
+			<a href="#">标题2</a>
+			<p>发多少2222222222222222度空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222222222空间</p>
+		</li>
+				<li>
+			<a href="#">标题2</a>
+			<p>发多少2222222222222222度空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222222222空间</p>
+		</li>
+	</ul>
+	
+	<ul class="item">
+		<li class="cateName">22222266666666666666666666666666622</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多少2222222222222222度空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222222222空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多少2222222222222222度空间</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多2222222222222222222222空间</p>
+		</li>
 	</ul>
 
+	<ul class="item">
+		<li class="cateName">333333333333333333333</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多222222222222223333333333333333333333</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多222222222222223333333333333333333333</p>
+		</li>
+		<li>
+			<a href="#">标题2</a>
+			<p>发多222222222222223333333333333333333333</p>
+		</li>
+	</ul>
+	
 </div>
 
 <script type="text/javascript" src="JTouch.js" ></script>
@@ -132,6 +198,16 @@ div{padding:0;margin:0;font-size:14px;}
 
 
 (function(){
+	var Common = {
+		isWebkit : function(){
+			return (navigator.userAgent.toLowerCase().indexOf('webkit') > 0)?true:false;
+		},
+		css : function(obj,val){
+			for(var attr in val){
+				obj.style[attr] = val[attr];
+			}
+		}
+	};
 	var JScroll = function(params){
 		if(!(this instanceof JScroll)) {
 			return new JScroll(params);
@@ -139,185 +215,171 @@ div{padding:0;margin:0;font-size:14px;}
 		this.params = params || {};
 		this.wrap = this.params.wrap || document.getElementById('wrap');
 		this.touch = JTouch(this.wrap);
+		this.eachHeight = 200;//鼠标滚轮一次的长度
 		this.init();
 	};
 	JScroll.prototype={
 		init : function () {
 			var _this = this;
-			_this.items = _this.wrap.getElementsByTagName('ul');//获取子元素ul的数组
-			_this.length = _this.items.length;//数组长度
-			_this.current = 0;//当前滚动到第几个
-			_this.isAnimate = false;
+			
+			_this.isAnimate = false;//判断是否有动画
+			_this.isStop = false; //是否停止
 			_this.handleHash = {}; //事件绑定的哈希表
 			
-			_this.eachHeight = 100;//鼠标滚轮一次的长度
-			
-			_this.disTop = 0; //滚动的距离
-			_this.resultTop = 0;//开始或者结束的时候的距离
+			_this.disTop = 0; //滚动的距离，变化值
+			_this.resultTop = 0;//开始或者结束的时候的距离，只在开始结束时改变
 			
 			/*
 				bodyHeight （窗口高度） - wrapHeight (外围容器高度)  = limitHeight (底部临界值)
 			*/
 			_this.bodyHeight = Math.max(document.body.offsetHeight,document.body.clientHeight);
 			_this.wrapHeight = _this.wrap.scrollHeight;
-			_this.limitHeight =  _this.wrapHeight-_this.bodyHeight;
+			_this.limitHeight =  _this.bodyHeight-_this.wrapHeight;//限制的滚动距离
+			
+			_this.wrap.style.height = _this.wrap.scrollHeight +'px';
+			
+			//_this.nav = new Nav(_this.wrap);实例化导航变化
 			
 			/*
-				posX 获取 ul > li:first 距离左边的距离
-				width 获取 ul > li:first 的宽度
+				Touch事件的处理
 			*/
-			_this.posX = _this._pageX(_this.items[0].getElementsByTagName('li')[0]); 
-			_this.width = _this.items[0].getElementsByTagName('li')[0].offsetWidth; 
-
-			_this._setData(); //缓存每个ul到顶部距离
 			
-			_this.touch.on('mousewheel',function(evt,data){
-				//鼠标每次移动的长度，通过_this.eachHeight设置
-				if(_this.disTop >= _this.limitHeight && data['direction'] === 'down'){
-					return false;
-				}else if(_this.disTop <= 0 && data['direction'] === 'up'){
-					return false;
+			_this.touch.on('start',function(){
+				_this.stop();
+				if(!_this._limit()){
+					_this.resultTop = _this.disTop;
 				};
-				_this._run((data['direction'] === 'down')?_this.eachHeight:-_this.eachHeight,true);
 			}).on('swipe',function(evt,data){
-				_this.move(-data['y']);
+				_this.move(data['y']);
 				if(data['status'] == 'end'){
 					_this.end();
 				};
+			}).on('mousewheel',function(evt,data){
+				var dis;
+				if(!_this._limit()){
+					_this.resultTop = _this.disTop;
+				};
+				
+				if(data['direction'] === 'up'){
+					if (_this.resultTop === 0){
+						return false;
+					}else if(_this.resultTop + _this.eachHeight > 0){
+						dis = -_this.resultTop;
+					}else {
+						dis = _this.eachHeight;
+					}
+				}else{
+					if (_this.resultTop === _this.limitHeight){
+						return false;
+					}else if(_this.resultTop - _this.eachHeight < _this.limitHeight){
+						dis = _this.limitHeight - _this.resultTop;
+					}else {
+						dis = -_this.eachHeight;
+					}
+				};
+				
+				_this.run(dis,100);
+			}).on('flick',function(evt,data){
+				var dis,time = data['time']*5;
+				if(_this.disTop < _this.limitHeight || _this.disTop > 0){
+					return false;
+				};
+				dis = (data['direction'] === 'up')?-time*2 : time*2;
+				_this.run(dis,time);
 			}).on('end',function(){
 				_this.end();
-			}).on('start',function(){
-				_this.resultTop = _this.wrap.scrollTop;
 			});
-
 		},
 		move : function (dis) {
-			var _this = this;
-			_this.disTop = _this.resultTop+dis;		
-			_this.wrap.scrollTop = _this.disTop;
-			
-			if(_this.disTop　>　_this.limitHeight){
-				_this.disTop = _this.limitHeight;
-			}else if(_this.disTop < 0){
-				_this.disTop = 0;
-			};
-			
-			_this.scroll(dis);//触发导航移动
-			
+			var _this = this, result = _this.resultTop + dis;
+			_this.translate(result); //开始移动
+			_this.disTop = result;
+			//_this.nav.scroll(_this.disTop);处理导航
 		},
-		end : function () {
-			var _this = this;
-			_this.resultTop = _this.wrap.scrollTop;
-		},
-		_run : function (dis) {
-			var _this = this, b = _this.resultTop, c=dis, d = 5, t=0;
+		run : function (dis,time) {
+			var _this, result, t, b, c, d;
+			_this = this;
 			if(_this.isAnimate){
 				return false;
-			}
+			};
+			result = _this.resultTop + dis;
+			if(result >= 200){
+				result = 200;
+				dis = result - _this.resultTop;
+			}else if(result <= _this.limitHeight - 200){
+				result = _this.limitHeight - 200;
+				dis = result - _this.resultTop;
+			};
+			
+			t = 0;
+			b = _this.resultTop;
+			c = dis;
+			d = parseInt(time/20,10);
+			_this.translate(result,time); //开始移动
 			function Run(){
 				_this.isAnimate = true;
-				_this.wrap.scrollTop = _this.disTop = Math.ceil(_this._linear(t,b,c,d));
+				_this.disTop = Math.ceil(_this._linear(t,b,c,d));
 				if(t<d){
 					t++;
-					setTimeout(Run,10);
+					_this.timer = setTimeout(Run,10);
 				}else{
 					_this.isAnimate = false;
-					_this.resultTop = _this.disTop = _this.wrap.scrollTop;
+					_this.disTop = result;
+					_this.end();
 				};
-				_this.scroll(dis);
-			}
+			};
 			Run();
+		},
+		translate : function (dis,time) {
+			var _this = this, time;
+			time = time?parseInt(time,10):0;
+			if(Common.isWebkit()){
+				Common.css(_this.wrap,{
+					'WebkitTransform' : 'translate3d(0,'+dis+'px,0)',
+					'WebkitTransitionDuration' : time+'ms',
+					'WebkitTransitionTimingFunction':'linear'
+				});
+			}else{
+				Common.css(_this.wrap,{
+					'transform' : 'translate(0,'+dis+'px)',
+					'transitionDuration' : time+'ms',
+					'transitionTimingFunction':'linear'
+				});
+			}
+		},
+		stop : function () {
+			var _this = this;
+			if(_this.isAnimate){
+				clearTimeout(_this.timer);
+				_this.isAnimate = false;
+				_this.translate(_this.disTop);
+				_this.end();
+			};
+		},
+		end : function () {
+			var _this = this, time;
+			if(_this._limit()){
+				time = Math.min(Math.abs(_this.disTop),Math.abs(_this.limitHeight-_this.disTop));
+				time = time < 300 ? time : 300;
+				_this.translate(_this.resultTop,time); //到达边界，反弹效果
+			}else{
+				_this.resultTop = _this.disTop;
+			}
+		},
+		_limit : function () {
+			var _this = this;
+			if(_this.disTop < _this.limitHeight){
+				_this.resultTop = _this.limitHeight;
+				return true;
+			}else if(_this.disTop > 0){
+				_this.resultTop = 0;
+				return true;
+			}else {
+				return false;
+			}
 		},
 		_linear : function(t,b,c,d){
 			return c*t/d + b;
-		},
-		scroll:function(dis){
-			//处理滚动条的方法
-			var _this = this;
-			var next = (_this.current < _this.length)?_this.current + 1 : _this.length;
-			var prev = (_this.current < 1)?0: _this.current - 1;
-			
-			//console.log('结果'+_this.result+'前面'+_this.topArray[_this.current]['y']+'当前'+_this.current);
-			
-			if(_this.disTop > _this.topArray[_this.current]['y'] && _this.disTop < _this.topArray[_this.current]['limit']){
-				_this._startNav(_this.current);
-			}else if(_this.disTop > _this.topArray[_this.current]['limit']){
-				_this._stopNav(_this.current,'bottom');
-				if(_this.disTop > _this.topArray[next]['y']){
-					_this.current = next;
-				}
-			}else if(_this.disTop < _this.topArray[_this.current]['y']){
-				_this._stopNav(_this.current,'top');
-				if(_this.disTop < _this.topArray[prev]['limit']){
-					_this.current = prev;
-				}
-			}
-		},
-		_startNav : function(current){
-			var _this = this;
-			_this._setStyle(_this.newObj[current],{
-				'position':'fixed',
-				'left':_this.posX+'px',
-				'top':'0px',
-				'bottom':'auto',
-				'width':_this.width+'px'
-			});
-		},
-		_stopNav : function (current,where) {
-			var _this = this;
-			switch (where){
-				case 'top':
-					_this._setStyle(_this.newObj[current],{
-					'position':'absolute',
-					'left':'0px',
-					'top':'0px',
-					'bottom':'auto',
-					'width':_this.width+'px'
-					});
-					break;
-				case 'bottom':
-					_this._setStyle(_this.newObj[current],{
-						'position':'absolute',
-						'left':'0px',
-						'top':'auto',
-						'bottom':'0px',
-						'width':_this.width+'px'
-					});
-					break;
-			};
-		},
-		_setData:function(){
-			var _this = this,i = 0, y;
-			
-			_this.topArray = []; //建立pageY数组
-			_this.newObj = {};//缓存对象
-			
-			for(i; i<_this.length; i += 1){
-				y = _this._pageY(_this.items[i]);
-				_this.topArray.push({'y':y,'limit':0});
-				if(i > 0){
-					_this.topArray[i-1]['limit'] = y-50;
-					if(i === _this.length -1){
-						_this.topArray[i]['limit'] = _this.wrapHeight-50;
-					}
-				};
-				_this.newObj[i] = _this.items[i].getElementsByTagName('li')[0];
-			};
-			
-		},
-		_setStyle:function(obj,val){
-			//设置样式
-			for(var attr in val){
-				obj.style[attr] = val[attr];
-			}
-		},
-		_pageX:function(elem){
-			//获取距离左边的距离
-			return elem.offsetParent?(elem.offsetLeft+this._pageX(elem.offsetParent)):elem.offsetLeft;
-		},
-		_pageY:function(elem){
-			//获取距离顶部的距离
-			return elem.offsetParent?(elem.offsetTop+this._pageY(elem.offsetParent)):elem.offsetTop;
 		},
 		_bind : (function() {
 			if (window.addEventListener) {
@@ -362,6 +424,110 @@ div{padding:0;margin:0;font-size:14px;}
 			}
 		}
 	};
+	
+	var Nav = function (obj) {
+		var _this = this;
+		_this.items = obj.getElementsByTagName('ul');//获取子元素ul的数组
+		_this.init();
+	}
+	Nav.prototype = {
+		init:function(){
+			var _this = this,i = 0, y;
+			_this.current = 0;//当前滚动到第几个
+			_this.length = _this.items.length;//数组长度
+			_this.topArray = []; //建立pageY数组
+			_this.newObj = {};//缓存对象
+			
+			/*
+				posX 获取 ul > li:first 距离左边的距离
+				width 获取 ul > li:first 的宽度
+			*/
+			_this.posX = _this._pageX(_this.items[0].getElementsByTagName('li')[0]); 
+			_this.width = _this.items[0].getElementsByTagName('li')[0].offsetWidth; 
+
+
+			for(i; i<_this.length; i += 1){
+				y = _this._pageY(_this.items[i]);
+				_this.topArray.push({'y':y,'limit':0});
+				if(i > 0){
+					_this.topArray[i-1]['limit'] = y-50;
+					if(i === _this.length -1){
+						_this.topArray[i]['limit'] = _this.wrapHeight-50;
+					}
+				};
+				_this.newObj[i] = _this.items[i].getElementsByTagName('li')[0];
+			};
+			
+		},
+		scroll:function(disTop){
+			//处理滚动条的方法
+			var _this = this;
+			var next = (_this.current < _this.length)?_this.current + 1 : _this.length;
+			var prev = (_this.current < 1)?0: _this.current - 1;
+			
+			if(disTop > _this.topArray[_this.current]['y'] && disTop < _this.topArray[_this.current]['limit']){
+				_this._startNav(_this.current);
+			}else if(disTop > _this.topArray[_this.current]['limit']){
+				_this._stopNav(_this.current,'bottom');
+				if(disTop > _this.topArray[next]['y']){
+					_this.current = next;
+				}
+			}else if(disTop < _this.topArray[_this.current]['y']){
+				_this._stopNav(_this.current,'top');
+				if(disTop < _this.topArray[prev]['limit']){
+					_this.current = prev;
+				}
+			}
+		},
+		_startNav : function(current){
+			var _this = this;
+			_this._setStyle(_this.newObj[current],{
+				'position':'fixed',
+				'left':_this.posX+'px',
+				'top':'0px',
+				'bottom':'auto',
+				'width':_this.width+'px'
+			});
+		},
+		_stopNav : function (current,where) {
+			var _this = this;
+			switch (where){
+				case 'top':
+					_this._setStyle(_this.newObj[current],{
+					'position':'absolute',
+					'left':'0px',
+					'top':'0px',
+					'bottom':'auto',
+					'width':_this.width+'px'
+					});
+					break;
+				case 'bottom':
+					_this._setStyle(_this.newObj[current],{
+						'position':'absolute',
+						'left':'0px',
+						'top':'auto',
+						'bottom':'0px',
+						'width':_this.width+'px'
+					});
+					break;
+			};
+		},
+		_setStyle:function(obj,val){
+			//设置样式
+			for(var attr in val){
+				obj.style[attr] = val[attr];
+			}
+		},
+		_pageX:function(elem){
+			//获取距离左边的距离
+			return elem.offsetParent?(elem.offsetLeft+this._pageX(elem.offsetParent)):elem.offsetLeft;
+		},
+		_pageY:function(elem){
+			//获取距离顶部的距离
+			return elem.offsetParent?(elem.offsetTop+this._pageY(elem.offsetParent)):elem.offsetTop;
+		}
+	};
+	
 	window.JScroll = JScroll;
 })();
 

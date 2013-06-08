@@ -4,14 +4,15 @@
 <meta charset="UTF-8">
 <title>grid</title>
 <style>
-html,body{width:100%;height:100%;margin:0;padding:0;}
-body{overflow:hidden;}
+html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;}
+
 div{padding:0;margin:0;font-size:14px;}
 
 .clear:after{content:"";display:block;height:0;clear:both;visibility: hidden;overflow:hidden;}
 .clear{*zoom:1;}
 
-#wrap{width:30%;border-right:1px solid #ccc;border-left:1px solid #ccc;margin-left:30%;position:absolute;top:0px;bottom:0px;}
+#wrap{width:30%;border-right:1px solid #ccc;border-left:1px solid #ccc;margin-left:30%;height:100%;background:#ccc;overflow:hidden;}
+
 
 #wrap ul{list-style:none;margin:0px;padding:0;width:100%;position:relative;}
 #wrap ul li{margin:0px;width:100%;background:#eee;border-bottom:2px solid #ccc;padding:10px 0px;}
@@ -127,7 +128,8 @@ div{padding:0;margin:0;font-size:14px;}
 
 </div>
 
-<script type="text/javascript" src="jTouch.js" ></script>
+
+<script type="text/javascript" src="JTouch.js" ></script>
 <script>
 
 
@@ -138,7 +140,7 @@ div{padding:0;margin:0;font-size:14px;}
 		};
 		this.params = params || {};
 		this.wrap = this.params.wrap || document.getElementById('wrap');
-		this.touch = jTouch(this.wrap);
+		this.touch = JTouch(this.wrap);
 		this.init();
 	};
 	JScroll.prototype={
@@ -159,6 +161,8 @@ div{padding:0;margin:0;font-size:14px;}
 			_this.wrapHeight = _this.wrap.scrollHeight;
 			_this.limitHeight =  _this.bodyHeight - _this.wrapHeight;
 			
+			_this.wrap.style.height = _this.wrap.scrollHeight +'px';
+			
 			/*
 				posX 获取 ul > li:first 距离左边的距离
 				width 获取 ul > li:first 的宽度
@@ -175,6 +179,7 @@ div{padding:0;margin:0;font-size:14px;}
 				if(data['status'] == 'end'){
 					_this.end();
 				};
+			}).on('flick',function(evt,data){
 			}).on('end',function(){
 				_this.end();
 			});
@@ -213,7 +218,7 @@ div{padding:0;margin:0;font-size:14px;}
 				_this.wrap.style.WebkitTransform = 'translate3d(0,'+result+'px,0)';
 				_this.disTop = result;
 			}else{
-				_this.scroll();
+				
 				_this.wrap.style.WebkitTransform = 'translate3d(0,'+result+'px,0)';
 				_this.result = _this.disTop + dis;
 			};
