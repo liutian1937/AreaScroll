@@ -284,7 +284,7 @@ div{padding:0;margin:0;font-size:14px;}
 				if(_this.disTop < _this.limitHeight || _this.disTop > 0){
 					return false;
 				};
-				dis = (data['direction'] === 'up')?-time*2 : time*2;
+				dis = (data['direction'] === 'up')?-data['speed']*500 : data['speed']*500;
 				_this.run(dis,time);
 			}).on('end',function(){
 				_this.end();
@@ -314,25 +314,25 @@ div{padding:0;margin:0;font-size:14px;}
 			t = 0;
 			b = _this.resultTop;
 			c = dis;
-			d = parseInt(time,10);
+			d = parseInt(time/5,10);
 			_this.translate(result,time); //开始移动
 			function Run(){
 				_this.isAnimate = true;
 				_this.disTop = Math.ceil(_this._linear(t,b,c,d));
 				if(t<d){
 					t++;
-					_this.timer = setTimeout(Run,1);
+					_this.timer = setTimeout(Run,5);
+					_this.nav.scroll(-_this.disTop);//改变菜单的标题显示
 				}else{
 					_this.isAnimate = false;
 					_this.disTop = result;
 					_this.end();
 				};
-				_this.nav.scroll(-_this.disTop);//改变菜单的标题显示
 			};
 			Run();
 		},
 		translate : function (dis,time) {
-			var _this = this, time;
+			var _this = this, dis = parseInt(dis,10), time;
 			time = time?parseInt(time,10):0;
 			if(Common.isWebkit()){
 				Common.css(_this.wrap,{
@@ -366,6 +366,7 @@ div{padding:0;margin:0;font-size:14px;}
 			}else{
 				_this.resultTop = _this.disTop;
 			}
+			_this.nav.scroll(-_this.resultTop);
 		},
 		_limit : function () {
 			var _this = this;
@@ -437,7 +438,8 @@ div{padding:0;margin:0;font-size:14px;}
 			var _this = this,i = 0, y;
 			_this.current = 0;//当前滚动到第几个
 			_this.length = _this.items.length;//数组长度
-			_this.topArray = []; //建立pageY数组
+			_this.topArray = []; //建立pageY和limit数组
+			_this.topY = []; //建立pageY数组
 			_this.newObj = {};//缓存对象
 			
 			/*
@@ -448,6 +450,7 @@ div{padding:0;margin:0;font-size:14px;}
 			for(i; i<_this.length; i += 1){
 				y = _this._pageY(_this.items[i]);
 				_this.topArray.push({'y':y,'limit':0});
+				_this.topY.push(y);
 				if(i > 0){
 					_this.topArray[i-1]['limit'] = y-_this.topArray[i-1]['y']-_this.titleHeight;
 					if(i === _this.length -1){
@@ -460,22 +463,28 @@ div{padding:0;margin:0;font-size:14px;}
 		},
 		scroll:function(disTop){
 			//处理滚动条的方法
-			var _this = this;
-			var next = _this.current + 1 ;
-			var prev = _this.current - 1;
+			var _this = this, prev, distance, i = 0;
+			_this.current = _this.getCurrent(disTop);
+			if(_this.current < 0){
+				_this.current = 0;
+			}else if(_this.current > _this.length){
+				_this.current = _this.length;
+			};  
+			distance = disTop - _this.topArray[_this.current]['y'];
 			
-			var distance = disTop - _this.topArray[_this.current]['y'];
+			for (i; i< _this.length; i++){
+				if(i > _this.current-1){
+					_this.translate(0,i);
+				}
+			}
 			
 			if(disTop > _this.topArray[_this.current]['y'] && distance < _this.topArray[_this.current]['limit']){
 				_this.translate(distance);
-			}else if(next < _this.length && disTop > _this.topArray[next]['y']){
-				_this.current = next;
-			}else if(prev >= 0 && disTop < _this.topArray[_this.current]['y']){
-				_this.current = prev;
-			}
+			};
+			
 		},
-		translate : function (dis) {
-			var _this = this, obj = _this.newObj[_this.current];
+		translate : function (dis,num) {
+			var _this = this, obj = _this.newObj[num] || _this.newObj[_this.current];
 			if(Common.isWebkit()){
 				Common.css(obj,{
 					'WebkitTransform' : 'translate3d(0,'+dis+'px,0)'
@@ -485,6 +494,13 @@ div{padding:0;margin:0;font-size:14px;}
 					'transform' : 'translate(0,'+dis+'px)'
 				});
 			}
+		},
+		getCurrent : function (dis){
+			var _this = this, newArray;
+			newArray = _this.topY.slice();
+			newArray.push(dis);
+			newArray.sort(function(a,b){return a-b});
+			return newArray.indexOf(dis)-1;
 		},
 		_pageY:function(elem){
 			//获取距离顶部的距离
