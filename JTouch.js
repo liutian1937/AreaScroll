@@ -148,7 +148,7 @@ ok8008@yeah.net
 
 				if (_this.data['time'] < 300) {
 					duration = Math.max(Math.abs(_this.currentX - _this.swipeData['x']),Math.abs(_this.currentY - _this.swipeData['y']));
-					if(duration > 300){
+					if(duration > 20){
 						//时间小于300，动作为轻拂：flick
 						if (Math.abs(offsetY) > Math.abs(offsetX)) {
 							_this.data['direction'] = offsetY > 0 ? 'down' : 'up';
